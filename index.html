@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which overload are you carrying? — a 5-minute check for UX designers</title>
+<meta name="description" content="A short self-diagnostic for UX designers built from Laura Willis's 'AI Without Exhaustion' talk: attention overload, cognitive overload, recovery impairment, meeting overload and AI skill drift — and one or two adjustments to try.">
+<meta property="og:title" content="Which overload are you carrying?">
+<meta property="og:description" content="A 5-minute self-diagnostic for UX designers, built from Laura Willis's AI Without Exhaustion talk. Five overload types, one or two adjustments.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230b5d54'/><path d='M26 60h12V40H26zm18 12h12V28H44zm18-8h12V36H62z' fill='%23fff'/></svg>">
+<style>
+  :root{
+    --bg:#f4f3ef;
+    --card:#ffffff;
+    --ink:#17181a;
+    --ink-soft:#54585c;
+    --ink-faint:#7d8288;
+    --line:#e2e0d9;
+    --line-strong:#cfccc2;
+    --accent:#0b5d54;
+    --accent-ink:#ffffff;
+    --accent-wash:#e6efed;
+    --warn:#8a5a12;
+    --warn-wash:#fbf2e2;
+    --t1:#b1471f;
+    --t2:#1f6fb2;
+    --t3:#a2325f;
+    --t4:#8a6d1f;
+    --t5:#6b4bb0;
+    --radius:14px;
+    --shadow:0 1px 2px rgba(23,24,26,.05),0 8px 24px -12px rgba(23,24,26,.18);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#121413;
+      --card:#1b1e1d;
+      --ink:#f2f1ed;
+      --ink-soft:#a9aeac;
+      --ink-faint:#828885;
+      --line:#2c302e;
+      --line-strong:#3a3f3c;
+      --accent:#4fb3a6;
+      --accent-ink:#0d1413;
+      --accent-wash:#1d2b29;
+      --warn:#e0b271;
+      --warn-wash:#2a2419;
+      --t1:#e08a63;
+      --t2:#6aaee0;
+      --t3:#e07aa2;
+      --t4:#d8bb63;
+      --t5:#a58ae0;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font);
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px 96px}
+  a{color:var(--accent)}
+
+  /* ---------- hero ---------- */
+  header.hero{padding:56px 0 28px}
+  .eyebrow{
+    display:inline-block;font-size:12px;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--accent);
+    background:var(--accent-wash);border-radius:999px;padding:5px 12px;margin:0 0 18px
+  }
+  h1{
+    font-size:clamp(30px,6vw,44px);
+    line-height:1.12;letter-spacing:-.022em;margin:0 0 16px;font-weight:800;
+    text-wrap:balance;
+  }
+  .lede{font-size:clamp(17px,2.4vw,19px);color:var(--ink-soft);margin:0 0 22px;max-width:60ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 4px}
+  .pill{
+    font-size:13px;color:var(--ink-soft);background:var(--card);
+    border:1px solid var(--line);border-radius:999px;padding:5px 12px
+  }
+  .note{
+    font-size:14.5px;color:var(--ink-soft);background:var(--card);
+    border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:0 var(--radius) var(--radius) 0;padding:14px 16px;margin:24px 0 0
+  }
+  .note strong{color:var(--ink)}
+
+  /* ---------- stats ---------- */
+  .stats{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));
+    gap:1px;background:var(--line);border:1px solid var(--line);
+    border-radius:var(--radius);overflow:hidden;margin:26px 0 0
+  }
+  .stat{background:var(--card);padding:14px 12px}
+  .stat b{display:block;font-size:22px;letter-spacing:-.02em;line-height:1.15;font-variant-numeric:tabular-nums}
+  .stat span{display:block;font-size:12.5px;line-height:1.4;color:var(--ink-soft);margin-top:4px}
+  .stat-src{font-size:12.5px;color:var(--ink-faint);margin:8px 0 0}
+
+  /* ---------- cards / sections ---------- */
+  section.card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px 24px;margin:20px 0;box-shadow:var(--shadow)
+  }
+  h2{font-size:22px;letter-spacing:-.01em;margin:0 0 6px;font-weight:750;line-height:1.25}
+  .sub{font-size:14.5px;color:var(--ink-soft);margin:0 0 18px}
+
+  /* ---------- scale legend ---------- */
+  .scale-key{
+    display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--ink-faint);
+    padding:12px 14px;background:var(--bg);border-radius:10px;margin:0 0 22px
+  }
+  .scale-key b{color:var(--ink-soft);font-weight:700}
+
+  /* ---------- progress ---------- */
+  .progress-wrap{position:sticky;top:0;z-index:20;background:var(--card);padding:10px 0 12px;margin:0 0 4px}
+  .progress-track{height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:var(--accent);border-radius:99px;transition:width .25s ease}
+  .progress-label{font-size:13px;color:var(--ink-faint);margin:7px 0 0;text-align:right}
+
+  /* ---------- questions ---------- */
+  fieldset.q{border:0;border-top:1px solid var(--line);padding:18px 0 6px;margin:0}
+  fieldset.q:first-of-type{border-top:0;padding-top:0}
+  legend.q-text{
+    font-size:16.5px;font-weight:600;line-height:1.45;padding:0;margin:0 0 4px;
+    display:block;width:100%;color:var(--ink)
+  }
+  .q-num{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:22px;height:22px;border-radius:6px;background:var(--bg);color:var(--ink-faint);
+    font-size:12px;font-weight:700;margin-right:8px;vertical-align:1px
+  }
+  .opts{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 6px}
+  .opt{position:relative;flex:1 1 auto;min-width:110px}
+  .opt input{position:absolute;opacity:0;width:100%;height:100%;left:0;top:0;margin:0;cursor:pointer}
+  .opt span{
+    display:block;text-align:center;padding:9px 10px;border:1px solid var(--line-strong);
+    border-radius:10px;font-size:14px;color:var(--ink-soft);background:var(--card);
+    transition:background .12s,border-color .12s,color .12s;user-select:none
+  }
+  .opt input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:650}
+  .opt input:focus-visible+span{outline:3px solid var(--accent);outline-offset:2px}
+  .opt:hover span{border-color:var(--accent)}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    appearance:none;border:1px solid transparent;border-radius:11px;padding:13px 22px;
+    font-size:16px;font-weight:650;font-family:inherit;cursor:pointer;
+    background:var(--accent);color:var(--accent-ink);line-height:1.2
+  }
+  .btn:hover{filter:brightness(1.08)}
+  .btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+  .btn:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+  .btn.ghost{background:transparent;color:var(--ink-soft);border-color:var(--line-strong)}
+  .btn.ghost:hover{color:var(--ink);border-color:var(--accent);filter:none}
+  .btn-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:20px 0 0}
+  .hint{font-size:13.5px;color:var(--ink-faint);margin:10px 0 0}
+
+  /* ---------- results ---------- */
+  #results[hidden]{display:none}
+  .headline{
+    font-size:clamp(21px,4vw,27px);font-weight:800;letter-spacing:-.015em;
+    margin:0 0 6px;line-height:1.2;text-wrap:balance
+  }
+  .headline .tint{color:var(--accent)}
+  .result-list{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:14px}
+  .type{
+    border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px;background:var(--card);
+    border-left:4px solid var(--line-strong)
+  }
+  .type.primary{border-color:var(--accent);border-left-color:var(--accent);background:var(--accent-wash)}
+  .type-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .type-name{font-size:16px;font-weight:700;margin:0;line-height:1.3}
+  .type-score{font-size:13px;color:var(--ink-soft);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .badge{
+    display:inline-block;font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+    color:var(--accent-ink);background:var(--accent);border-radius:5px;padding:2px 7px;margin-left:8px;
+    vertical-align:2px
+  }
+  .bar{height:7px;background:var(--line);border-radius:99px;margin:10px 0 12px;overflow:hidden}
+  .bar>i{display:block;height:100%;border-radius:99px;background:var(--accent);width:0}
+  .type[data-type="1"] .bar>i{background:var(--t1)}
+  .type[data-type="2"] .bar>i{background:var(--t2)}
+  .type[data-type="3"] .bar>i{background:var(--t3)}
+  .type[data-type="4"] .bar>i{background:var(--t4)}
+  .type[data-type="5"] .bar>i{background:var(--t5)}
+  .type p{margin:0 0 8px;font-size:15px;line-height:1.55}
+  .type p:last-child{margin-bottom:0}
+  .type .tell{color:var(--ink-soft)}
+  .type .tell b,.type .move b{color:var(--ink)}
+  .type .says{
+    display:block;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line-strong);
+    font-size:13.5px;color:var(--ink-faint)
+  }
+  .type .says b{color:var(--ink-soft);font-weight:650}
+  .section-label{
+    font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--ink-faint);margin:30px 0 12px
+  }
+
+  /* ---------- lens ---------- */
+  .lens-item{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-top:1px solid var(--line)}
+  .lens-item:first-of-type{border-top:0;padding-top:4px}
+  .lens-q{flex:1;font-size:15.5px;line-height:1.5;margin:0}
+  .toggle{display:flex;gap:6px;flex:0 0 auto}
+  .toggle label{position:relative}
+  .toggle input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+  .toggle span{
+    display:block;padding:7px 14px;border:1px solid var(--line-strong);border-radius:8px;
+    font-size:13.5px;color:var(--ink-soft);background:var(--card);user-select:none;min-width:46px;text-align:center
+  }
+  .toggle input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:650}
+  .toggle input:focus-visible+span{outline:3px solid var(--accent);outline-offset:2px}
+  #lensOut{
+    margin:18px 0 0;padding:14px 16px;border-radius:10px;font-size:15px;
+    background:var(--bg);color:var(--ink-soft);border:1px solid var(--line)
+  }
+  #lensOut.flag{background:var(--warn-wash);border-color:var(--warn);color:var(--ink)}
+
+  /* ---------- adjustments ---------- */
+  .adj-grid{display:grid;gap:8px;margin:4px 0 0}
+  .adj{position:relative;display:flex;gap:11px;align-items:flex-start;padding:11px 13px;
+    border:1px solid var(--line);border-radius:10px;background:var(--card);cursor:pointer}
+  .adj input{position:absolute;opacity:0;width:0;height:0}
+  .adj .box{
+    flex:0 0 auto;width:19px;height:19px;margin-top:2px;border-radius:5px;
+    border:1.5px solid var(--line-strong);background:var(--card);
+    display:flex;align-items:center;justify-content:center;font-size:13px;color:transparent;line-height:1
+  }
+  .adj input:checked+.box{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .adj input:checked~.adj-text{font-weight:650;color:var(--ink)}
+  .adj input:focus-visible+.box{outline:3px solid var(--accent);outline-offset:2px}
+  .adj:hover{border-color:var(--accent)}
+  .adj-text{font-size:15px;line-height:1.45;color:var(--ink-soft)}
+  .adj-text i{font-style:normal;color:var(--ink-faint);font-size:13px;display:block;margin-top:2px}
+  #adjOut{margin:16px 0 0;padding:14px 16px;border-radius:10px;font-size:15px;
+    background:var(--bg);color:var(--ink-soft);border:1px solid var(--line)}
+  #adjOut.good{background:var(--accent-wash);border-color:var(--accent);color:var(--ink)}
+  #adjOut.over{background:var(--warn-wash);border-color:var(--warn);color:var(--ink)}
+
+  /* ---------- details ---------- */
+  details{border:1px solid var(--line);border-radius:12px;background:var(--card);margin:14px 0;padding:0}
+  details>summary{
+    cursor:pointer;padding:16px 18px;font-weight:650;font-size:16px;list-style:none;
+    display:flex;justify-content:space-between;align-items:center;gap:12px
+  }
+  details>summary::-webkit-details-marker{display:none}
+  details>summary::after{content:"+";font-size:20px;color:var(--ink-faint);line-height:1;font-weight:400}
+  details[open]>summary::after{content:"–"}
+  details>summary:focus-visible{outline:3px solid var(--accent);outline-offset:-3px;border-radius:12px}
+  .details-body{padding:0 18px 18px;font-size:15.5px;color:var(--ink-soft)}
+  .details-body ul{margin:10px 0;padding-left:20px}
+  .details-body li{margin:0 0 8px}
+  .details-body b{color:var(--ink)}
+
+  footer{margin:40px 0 0;padding-top:22px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink-faint)}
+  footer p{margin:0 0 8px}
+
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);
+    background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:10px;
+    font-size:14.5px;font-weight:600;opacity:0;pointer-events:none;transition:.22s;z-index:60;
+    box-shadow:0 10px 30px rgba(0,0,0,.25)
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  @media (max-width:560px){
+    body{font-size:16px}
+    .wrap{padding:0 16px 72px}
+    section.card{padding:20px 16px;border-radius:12px}
+    .opt{min-width:calc(50% - 4px);flex:1 1 calc(50% - 4px)}
+    .btn{width:100%}
+    .lens-item{flex-direction:column;gap:8px}
+    .toggle span{min-width:56px}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .stat:last-child:nth-child(odd){grid-column:span 2}
+  }
+  @media print{
+    :root{--bg:#fff;--card:#fff;--shadow:none}
+    .btn-row,.progress-wrap,.toast{display:none!important}
+    body{font-size:11pt;line-height:1.45}
+    header.hero{padding:0 0 10px}
+    h1{font-size:26pt;margin-bottom:8px}
+    .lede{margin-bottom:12px}
+    .meta{display:none}
+    .note{margin-top:14px}
+    .stats{margin-top:16px}
+    section.card,details{box-shadow:none}
+    #results,#lensCard,.type,.lens-item,details{break-inside:avoid}
+    #quizCard{break-inside:auto}
+    fieldset.q{break-inside:avoid}
+    #results[hidden]{display:block!important}
+    details>summary::after{display:none}
+    details{border:0;margin:10px 0}
+    details>summary{padding:8px 0}
+    details .details-body{padding:0 0 8px;display:block!important}
+    a{text-decoration:none;color:inherit}
+    a[href^="http"]::after{content:" (" attr(href) ")";font-size:9pt;color:#666}
+    footer{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="eyebrow">5-minute self-diagnostic</span>
+    <h1>Which overload are you carrying?</h1>
+    <p class="lede">"I'm overwhelmed" is not an actionable finding. Five different overloads, five different fixes — answer ten statements, then pick one or two adjustments you'll actually make.</p>
+    <div class="meta">
+      <span class="pill">For UX designers</span>
+      <span class="pill">10 statements</span>
+      <span class="pill">Nothing is sent anywhere</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>86%</b><span>feel stress and overwhelm from digital tech</span></div>
+      <div class="stat"><b>76%</b><span>attend meetings out of obligation</span></div>
+      <div class="stat"><b>87%</b><span>are distracted during meetings</span></div>
+      <div class="stat"><b>35%</b><span>take screen-free breaks</span></div>
+      <div class="stat"><b>47%</b><span>check work email in bed</span></div>
+    </div>
+    <p class="stat-src">Figures as presented in Laura Willis's talk. The 86% comes from 2023 — before AI was in everything.</p>
+
+    <p class="note"><strong>One thing to know first:</strong> this is a thinking tool, not a clinical instrument. The talk names <em>attention overload</em> ("brain fry"), <em>cognitive overload</em> and <em>recovery impairment</em> directly; meeting overload and AI skill drift are drawn from the rest of her material, not presented as a formal taxonomy. If your result worries you, that is a conversation to have with a person, not a form.</p>
+  </header>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="card" id="quizCard">
+    <h2>Part 1 — Rate yourself</h2>
+    <p class="sub">Thinking about the <strong>last two weeks at work</strong>, how often is each statement true?</p>
+
+    <div class="scale-key" aria-hidden="true">
+      <span><b>0</b> Never</span>
+      <span><b>1</b> Sometimes</span>
+      <span><b>2</b> Often</span>
+      <span><b>3</b> Almost always</span>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-track" role="progressbar" aria-labelledby="progLabel" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" id="progBar">
+        <div class="progress-fill" id="progFill"></div>
+      </div>
+      <p class="progress-label" id="progLabel">0 of 10 answered</p>
+    </div>
+
+    <form id="quiz" novalidate>
+
+      <fieldset class="q">
+        <legend class="q-text"><span class="q-num">1</span>I juggle several AI tools or work streams at once, and switching between them leaves me fuzzy.</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q1" value="0"><span>Never</span></label>
+          <label class="opt"><input type="radio" name="q1" value="1"><span>Sometimes</span></label>
+          <label class="opt"><input type="radio" name="q1" value="2"><span>Often</span></label>
+          <label class="opt"><input type="radio" name="q1" value="3"><span>Almost always</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q">
+        <legend class="q-text"><span class="q-num">2</span>By mid-afternoon my brain feels fried, but I cannot point to the one thing that caused it.</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q2" value="0"><span>Never</span></label>
+          <label class="opt"><input type="radio" name="q2" value="1"><span>Sometimes</span></label>
+          <label class="opt"><input type="radio" name="q2" value="2"><span>Often</span></label>
+          <label class="opt"><input type="radio" name="q2" value="3"><span>Almost always</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q">
+        <legend class="q-text"><span class="q-num">3</span>I struggle to hold a train of thought for long before something pulls me away from it.</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q3" value="0"><span>Never</span></label>
+          <label class="opt"><input type="radio" name="q3" value="1"><span>Sometimes</span></label>
+          <label class="opt"><input type="radio" name="q3" value="2"><span>Often</span></label>
+          <label class="opt"><input type="radio" name="q3" value="3"><span>Almost always</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q">
+        <legend class="q-text"><span class="q-num">4</span>There is no block in my week where I think deeply without distractions.</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q4" value="0"><span>Never</span></label>
+          <label class="opt"><input type="radio" name="q4" value="1"><span>Sometimes</span></label>
+          <label class="opt"><input type="radio" name="q4" value="2"><span>Often</span></label>
+          <label class="opt"><input type="radio" name="q4" value="3"><span>Almost always</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q">
+        <legend class="q-text"><span class="q-num">5</span>I stay psychologically attached to work after hours — including work I have handed to AI.</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q5" value="0"><span>Never</span></label>
+          <label class="opt"><input type="radio" name="q5" value="1"><span>Sometimes</span></label>
+          <label class="opt"><input type="radio" name="q5" value="2"><span>Often</span></label>
+          <label class="opt"><input type="radio" name="q5" value="3"><span>Almost always</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q">
+        <legend class="q-text"><span class="q-num">6</span>I check work email or messages in bed, or before I am properly awake.</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q6" value="0"><span>Never</span></label>
+          <label class="opt"><input type="radio" name="q6" value="1"><span>Sometimes</span></label>
+          <label class="opt"><input type="radio" name="q6" value="2"><span>Often</span></label>
+          <label class="opt"><input type="radio" name="q6" value="3"><span>Almost always</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q">
+        <legend class="q-text"><span class="q-num">7</span>I attend meetings out of obligation rather than usefulness.</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q7" value="0"><span>Never</span></label>
+          <label class="opt"><input type="radio" name="q7" value="1"><span>Sometimes</span></label>
+          <label class="opt"><input type="radio" name="q7" value="2"><span>Often</span></label>
+          <label class="opt"><input type="radio" name="q7" value="3"><span>Almost always</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q">
+        <legend class="q-text"><span class="q-num">8</span>I am digitally distracted during meetings more often than I would admit out loud.</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q8" value="0"><span>Never</span></label>
+          <label class="opt"><input type="radio" name="q8" value="1"><span>Sometimes</span></label>
+          <label class="opt"><input type="radio" name="q8" value="2"><span>Often</span></label>
+          <label class="opt"><input type="radio" name="q8" value="3"><span>Almost always</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q">
+        <legend class="q-text"><span class="q-num">9</span>I hand AI tasks I would once have done myself, and I am less sure I could still do them well.</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q9" value="0"><span>Never</span></label>
+          <label class="opt"><input type="radio" name="q9" value="1"><span>Sometimes</span></label>
+          <label class="opt"><input type="radio" name="q9" value="2"><span>Often</span></label>
+          <label class="opt"><input type="radio" name="q9" value="3"><span>Almost always</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q">
+        <legend class="q-text"><span class="q-num">10</span>I have stopped asking colleagues a question because asking AI is faster.</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="q10" value="0"><span>Never</span></label>
+          <label class="opt"><input type="radio" name="q10" value="1"><span>Sometimes</span></label>
+          <label class="opt"><input type="radio" name="q10" value="2"><span>Often</span></label>
+          <label class="opt"><input type="radio" name="q10" value="3"><span>Almost always</span></label>
+        </div>
+      </fieldset>
+
+      <div class="btn-row">
+        <button type="button" class="btn" id="revealBtn" disabled>See my result</button>
+        <button type="button" class="btn ghost" id="resetBtn">Clear answers</button>
+      </div>
+      <p class="hint" id="quizHint">Answer all ten to unlock your result.</p>
+    </form>
+  </section>
+
+  <!-- ============ RESULTS ============ -->
+  <section class="card" id="results" hidden aria-live="polite">
+    <h2 class="sr-only">Your result</h2>
+    <p class="headline" id="headline"></p>
+    <p class="sub" id="subline"></p>
+
+    <ul class="result-list" id="resultList"></ul>
+
+    <p class="section-label">Your stack, in order</p>
+    <div id="oneline"></div>
+
+    <div class="btn-row">
+      <button type="button" class="btn" id="shareBtn">Copy link to my result</button>
+      <button type="button" class="btn ghost" id="printBtn">Print / save as PDF</button>
+    </div>
+    <p class="hint">The link carries your ten answers in the address bar — nothing is uploaded and no account is needed. Anyone who opens it sees the same result you do.</p>
+  </section>
+
+  <!-- ============ LENS ============ -->
+  <section class="card" id="lensCard">
+    <h2>Part 2 — Three questions worth sitting with</h2>
+    <p class="sub">From the talk's closing questions. Answer honestly and watch the counter.</p>
+
+    <div class="lens-item">
+      <p class="lens-q">What is my professional edge — and is AI strengthening it, or slowly weakening it?</p>
+      <div class="toggle">
+        <label><input type="radio" name="l1" value="1"><span>Yes</span></label>
+        <label><input type="radio" name="l1" value="0"><span>No</span></label>
+      </div>
+    </div>
+    <div class="lens-item">
+      <p class="lens-q">Am I giving AI the low-value tasks and keeping the high-value ones — or the other way round?</p>
+      <div class="toggle">
+        <label><input type="radio" name="l2" value="1"><span>Drifting</span></label>
+        <label><input type="radio" name="l2" value="0"><span>In control</span></label>
+      </div>
+    </div>
+    <div class="lens-item">
+      <p class="lens-q">If I felt overloaded, would I say so out loud — or quietly ask AI instead?</p>
+      <div class="toggle">
+        <label><input type="radio" name="l3" value="1"><span>Quietly</span></label>
+        <label><input type="radio" name="l3" value="0"><span>Out loud</span></label>
+      </div>
+    </div>
+
+    <p id="lensOut">Open communication is the principle that matters here: feeling safe to talk about AI use and overload. If that is missing, no amount of personal habit change fixes it — it needs to come from the top.</p>
+  </section>
+
+  <!-- ============ ADJUSTMENTS ============ -->
+  <section class="card" id="adjCard">
+    <h2>Part 3 — Pick one or two adjustments</h2>
+    <p class="sub">The talk asks for one or two changes, not a new personality. Choose what you will actually do this month.</p>
+
+    <div class="adj-grid" id="adjGrid">
+      <label class="adj"><input type="checkbox" name="adj" value="window"><span class="box">✓</span><span class="adj-text">Stare out of the window for five minutes<i>Deliberate, screen-free idleness. Her most memorable one.</i></span></label>
+      <label class="adj"><input type="checkbox" name="adj" value="break"><span class="box">✓</span><span class="adj-text">Take a proper screen-free break — phone stays away<i>Only 35% do this. Scrolling is not a break.</i></span></label>
+      <label class="adj"><input type="checkbox" name="adj" value="dnd"><span class="box">✓</span><span class="adj-text">Airplane mode or Do Not Disturb during focus time<i>Removes the interruption rather than resisting it.</i></span></label>
+      <label class="adj"><input type="checkbox" name="adj" value="alarm"><span class="box">✓</span><span class="adj-text">Get an alarm clock so the phone leaves the bedroom<i>47% of British people check work email in bed.</i></span></label>
+      <label class="adj"><input type="checkbox" name="adj" value="leave"><span class="box">✓</span><span class="adj-text">Take annual leave properly — actually switched off<i>Rest that does not restore you is not rest.</i></span></label>
+      <label class="adj"><input type="checkbox" name="adj" value="nonai"><span class="box">✓</span><span class="adj-text">Set non-AI, non-available time and stop being constantly reachable<i>Availability is a boundary, not a personality trait.</i></span></label>
+      <label class="adj"><input type="checkbox" name="adj" value="meetings"><span class="box">✓</span><span class="adj-text">Be fully present in meetings — close the inbox, phone away<i>87% admit to being digitally distracted.</i></span></label>
+      <label class="adj"><input type="checkbox" name="adj" value="agenda"><span class="box">✓</span><span class="adj-text">Push for human-first agenda design — reflect, engage, verbally confirm<i>Reverses the passive participation AI recaps encourage.</i></span></label>
+      <label class="adj"><input type="checkbox" name="adj" value="edge"><span class="box">✓</span><span class="adj-text">Ask "what's my professional edge?" before delegating to AI<i>Separate high-value from low-value tasks.</i></span></label>
+      <label class="adj"><input type="checkbox" name="adj" value="zones"><span class="box">✓</span><span class="adj-text">Create AI-free zones — in the day, or in the room<i>Some thinking should have no assistant.</i></span></label>
+      <label class="adj"><input type="checkbox" name="adj" value="curiosity"><span class="box">✓</span><span class="adj-text">Exercise curiosity and strengthen emotional intelligence<i>Dig deeper, ask questions, do not outsource the wondering.</i></span></label>
+      <label class="adj"><input type="checkbox" name="adj" value="people"><span class="box">✓</span><span class="adj-text">Spend time with people, fully present, no screens between you<i>And do not send late-night messages while you are at it.</i></span></label>
+    </div>
+
+    <p id="adjOut">Tick what you will actually do. One or two is the point.</p>
+  </section>
+
+  <!-- ============ FACILITATION ============ -->
+  <section class="card">
+    <h2>Running this with a team</h2>
+    <p class="sub">Ten minutes, no slides. The room tells you more than the individual results do.</p>
+
+    <details>
+      <summary>The 10-minute team version</summary>
+      <div class="details-body">
+        <ul>
+          <li><b>Silent first (3 min).</b> Everyone answers on their own device. No discussion yet — discussion contaminates the result.</li>
+          <li><b>One sentence each.</b> Everyone names only their <b>primary type</b>. No justifying, no ranking, no "but actually I have all five".</li>
+          <li><b>Tally the room.</b> Five types on a board, one mark against each name.</li>
+          <li><b>Read the tally, not the individual.</b> If most of the room lands on attention, cognitive or recovery, that is a norm problem, not a training problem — and the fixes are team-level: focus time, meeting hygiene, availability windows.</li>
+          <li><b>Each person commits to one or two adjustments</b> (Part 3), said out loud. Then re-run the quiz in a month and compare the tally.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>The misdiagnosis to watch for</summary>
+      <div class="details-body">
+        <p><b>Attention overload masquerading as an information problem.</b> When people say "there is too much to read", the cause is usually the tool-switching that stopped them reading it. Reduce the number of open streams before you build a better reading list.</p>
+        <p><b>Skill drift masquerading as efficiency.</b> If you are faster and less capable than last year, the second half of that sentence is the part that matters.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>The three questions the talk left open</summary>
+      <div class="details-body">
+        <ul>
+          <li><b>How do we make sure people still ask questions if they can ask AI instead?</b> It has to come from the top: leaders asking, visibly not knowing, and rewarding the question.</li>
+          <li><b>How do we protect against cognitive overload?</b> Work in blocks of focus time and minimise the distractions around them. It is a calendar decision before it is a willpower decision.</li>
+          <li><b>What about colleagues whose feedback sounds like it came from AI?</b> A verbal conversation, not a written accusation. Be open about it, and celebrate the human-ness when you find it.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <footer>
+    <p><b>Sources.</b> Statements and fixes are drawn from Laura Willis's talk <em>"AI Without Exhaustion — Making Real Change, Reclaiming Focus, Boundaries, and Balance"</em> (30 October 2026) and her HARMONY framework at <a href="https://www.laura-willis.com/blog" target="_blank" rel="noopener">laura-willis.com/blog</a>: honour rest, attention management, relationships, mindful use, open communication, nurturing human skills, your behaviour.</p>
+    <p><b>Not clinical.</b> A reflective self-check for workshop use, not a diagnostic or medical tool. The five-type split is an interpretation of her material, not a taxonomy she presents.</p>
+    <p>Built as a single self-contained page. Your answers stay in your browser and in the share link you choose to copy — there is no server, no analytics and no tracking of any kind.</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var TYPES = {
+    "1": {
+      name: "Attention overload (“brain fry”)",
+      tell: "You are juggling several tools and work streams at once, and the switching is what is draining you.",
+      move: "Reduce the number of open streams before you optimise any one of them. Set non-AI work time, batch your tool switching, and notice how much of the juggling was optional.",
+      says: "The talk's own phrase: juggling multiple AI tools while overseeing several work streams leads to attention overload — brain fry."
+    },
+    "2": {
+      name: "Cognitive overload",
+      tell: "You have no stretch of the week where you think without being interrupted.",
+      move: "Work in blocks of focus time and minimise the distractions around them. This is a calendar decision first: book the block, close the inbox, move the phone to another room.",
+      says: "Her answer to the audience question: protect cognitive overload with focus time and by minimising distractions."
+    },
+    "3": {
+      name: "Recovery impairment",
+      tell: "Work follows you home — even work you handed to AI.",
+      move: "Rebuild the edge of the day. Screen-free breaks, phone out of the bedroom, annual leave taken properly, and a real stop on availability. Rest that does not restore you is not rest.",
+      says: "Her term: recovery impairment follows working after hours, or staying psychologically engaged with work delegated to AI."
+    },
+    "4": {
+      name: "Meeting overload",
+      tell: "You are in the room but not in the meeting — and so is everyone else.",
+      move: "Be fully present in the ones you keep: inbox closed, phone away, human-first agenda with reflection and verbal confirmation. And decline the ones you attend out of obligation.",
+      says: "76% attend out of obligation and 87% are distracted — the talk frames meetings as a major site of disengagement."
+    },
+    "5": {
+      name: "AI dependency & skill drift",
+      tell: "You are faster than last year and less sure you could do the work unaided.",
+      move: "Ask what your professional edge is, then give AI the low-value tasks and keep the high-value ones. Build AI-free zones, and exercise curiosity and emotional intelligence deliberately.",
+      says: "Nurture human skills and mindful use: AI should strengthen your edge, not quietly replace it."
+    }
+  };
+
+  // question index -> type
+  var PAIRS = { "1":[1,2], "2":[3,4], "3":[5,6], "4":[7,8], "5":[9,10] };
+
+  var form = document.getElementById("quiz");
+  var revealBtn = document.getElementById("revealBtn");
+  var resetBtn = document.getElementById("resetBtn");
+  var hintEl = document.getElementById("quizHint");
+  var progFill = document.getElementById("progFill");
+  var progBar = document.getElementById("progBar");
+  var progLabel = document.getElementById("progLabel");
+  var results = document.getElementById("results");
+  var headline = document.getElementById("headline");
+  var subline = document.getElementById("subline");
+  var resultList = document.getElementById("resultList");
+  var oneline = document.getElementById("oneline");
+  var toast = document.getElementById("toast");
+  var revealed = false;
+
+  function answers(){
+    var out = [], i, el;
+    for (i = 1; i <= 10; i++){
+      el = form.querySelector('input[name="q' + i + '"]:checked');
+      out.push(el ? parseInt(el.value, 10) : null);
+    }
+    return out;
+  }
+
+  function countAnswered(a){
+    var n = 0;
+    for (var i = 0; i < a.length; i++){ if (a[i] !== null) n++; }
+    return n;
+  }
+
+  function scores(a){
+    var s = {}, k;
+    for (k in PAIRS){
+      if (!Object.prototype.hasOwnProperty.call(PAIRS, k)) continue;
+      var p = PAIRS[k];
+      s[k] = (a[p[0]-1] || 0) + (a[p[1]-1] || 0);
+    }
+    return s;
+  }
+
+  function band(n){
+    if (n <= 1) return "Low";
+    if (n <= 3) return "Moderate";
+    return "High";
+  }
+
+  function updateProgress(){
+    var a = answers();
+    var n = countAnswered(a);
+    progFill.style.width = (n / 10 * 100) + "%";
+    progBar.setAttribute("aria-valuenow", String(n));
+    progLabel.textContent = n + " of 10 answered";
+    revealBtn.disabled = n < 10;
+    if (n < 10){
+      hintEl.textContent = n === 0
+        ? "Answer all ten to unlock your result."
+        : (10 - n) + (10 - n === 1 ? " statement left to unlock your result." : " statements left to unlock your result.");
+    } else {
+      hintEl.textContent = "All ten answered — your result is below. You can change answers any time.";
+    }
+    if (revealed && n === 10) render(true);
+  }
+
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+    });
+  }
+
+  // "a", "a and b", "a, b and c"
+  function listJoin(arr){
+    if (arr.length === 0) return "";
+    if (arr.length === 1) return arr[0];
+    if (arr.length === 2) return arr[0] + " and " + arr[1];
+    return arr.slice(0, -1).join(", ") + " and " + arr[arr.length - 1];
+  }
+
+  function render(quiet){
+    var a = answers();
+    if (countAnswered(a) < 10) return;
+    var s = scores(a);
+
+    var order = Object.keys(TYPES).sort(function(x, y){
+      if (s[y] !== s[x]) return s[y] - s[x];
+      return Number(x) - Number(y);
+    });
+    var top = order[0];
+    var topScore = s[top];
+    var tied = order.filter(function(k){ return k !== top && s[k] === topScore; });
+    var near = order.filter(function(k){ return k !== top && s[k] === topScore - 1; });
+
+    var h = "";
+    if (topScore === 0){
+      h = "Nothing is scoring. <span class=\"tint\">Take the result as a clean bill.</span>";
+      subline.textContent = "Every type is low right now. Worth re-running after a heavy sprint — overload is situational, and a good week is not a diagnosis any more than a bad one is.";
+    } else if (tied.length){
+      var allTop = [top].concat(tied);
+      h = (allTop.length === 2 ? "You are carrying two at once: " : "You are carrying " + allTop.length + " at once: ") +
+          "<span class=\"tint\">" + listJoin(allTop.map(function(k){ return TYPES[k].name; })) + "</span>";
+      subline.textContent = (allTop.length === 2 ? "Both score " : "All of them score ") + topScore +
+        " out of 6, so there is no single primary type to pick. Read every one of them: a combination needs a combined fix, not one chosen arbitrarily.";
+    } else {
+      h = "Your primary type: <span class=\"tint\">" + TYPES[top].name + "</span>";
+      var names = function(arr){
+        return listJoin(arr.map(function(k){ return TYPES[k].name.toLowerCase(); }));
+      };
+      if (near.length){
+        subline.textContent = "It is close to " + names(near) +
+          " (" + (topScore - 1) + " out of 6). Read that one as well — being one point apart means a combination, not a tie to break.";
+      } else {
+        subline.textContent = "Scoring " + topScore + " out of 6 (" + band(topScore).toLowerCase() +
+          "). Your other types are further behind, so start with the first move below and leave the rest alone for now.";
+      }
+    }
+    headline.innerHTML = h;
+
+    var html = "";
+    order.forEach(function(k){
+      var t = TYPES[k];
+      var sc = s[k];
+      var pct = Math.round(sc / 6 * 100);
+      var isPrimary = (k === top && topScore > 0);
+      html += '<li class="type' + (isPrimary ? " primary" : "") + '" data-type="' + k + '">';
+      html += '<div class="type-head">';
+      html += '<p class="type-name">' + esc(k) + ". " + esc(t.name) + (isPrimary ? '<span class="badge">Primary</span>' : "") + "</p>";
+      html += '<span class="type-score">' + sc + "/6 · " + band(sc) + "</span>";
+      html += "</div>";
+      html += '<div class="bar" aria-hidden="true"><i style="width:' + pct + '%"></i></div>';
+      html += '<p class="tell"><b>The tell:</b> ' + esc(t.tell) + "</p>";
+      html += '<p class="move"><b>First move:</b> ' + esc(t.move) + "</p>";
+      html += '<span class="says"><b>Where this comes from:</b> ' + esc(t.says) + "</span>";
+      html += "</li>";
+    });
+    resultList.innerHTML = html;
+
+    oneline.innerHTML = order.map(function(k){
+      return '<p style="margin:0 0 6px;font-size:14.5px;color:var(--ink-soft)"><b style="color:var(--ink)">' +
+        esc(TYPES[k].name) + "</b> — " + s[k] + "/6 (" + band(s[k]) + ")</p>";
+    }).join("");
+
+    results.hidden = false;
+    if (!quiet){
+      results.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    revealed = true;
+  }
+
+  // ---- lens ----
+  var lensOut = document.getElementById("lensOut");
+  var lensDefault = lensOut.textContent;
+
+  function updateLens(){
+    var flags = 0, answered = 0;
+    ["l1","l2","l3"].forEach(function(n){
+      var el = document.querySelector('input[name="' + n + '"]:checked');
+      if (el){ answered++; if (el.value === "1") flags++; }
+    });
+    lensOut.classList.remove("flag");
+    if (answered === 0){
+      lensOut.textContent = lensDefault;
+      return;
+    }
+    if (flags === 0){
+      lensOut.textContent = "No flags. Your edge looks intact and you would say something if it were not — which is the position the whole framework depends on.";
+    } else if (flags < 3){
+      lensOut.textContent = flags + " of 3 flagged. At least one of these is quietly eroding: either your edge, your judgement about which tasks deserve AI, or your willingness to say you are overloaded. Name it in your next one-to-one.";
+    } else {
+      lensOut.textContent = "All three flagged. Read that as a system signal, not a personal one: open communication about AI use is missing, and the talk is explicit that this has to come from the top.";
+      lensOut.classList.add("flag");
+    }
+  }
+  document.querySelectorAll('input[name^="l"]').forEach(function(el){ el.addEventListener("change", updateLens); });
+
+  // ---- adjustments ----
+  var adjOut = document.getElementById("adjOut");
+  var adjDefault = adjOut.textContent;
+
+  function updateAdj(){
+    var picked = document.querySelectorAll('#adjGrid input[name="adj"]:checked');
+    var n = picked.length;
+    adjOut.classList.remove("good", "over");
+    if (n === 0){
+      adjOut.textContent = adjDefault;
+    } else if (n <= 2){
+      adjOut.classList.add("good");
+      adjOut.textContent = n === 1
+        ? "One adjustment. That is exactly what the talk asks for — small and specific beats a whole new regime."
+        : "Two adjustments. Enough to feel different, few enough to actually keep.";
+    } else {
+      adjOut.classList.add("over");
+      adjOut.textContent = n + " picked. The talk suggests one or two for a reason: a list this long is the overload wearing a plan's clothing. Choose the two you would defend in a month.";
+    }
+  }
+  document.querySelectorAll('#adjGrid input[name="adj"]').forEach(function(el){ el.addEventListener("change", updateAdj); });
+
+  // ---- share link ----
+  function encode(){ return answers().join(","); }
+
+  function decode(str){
+    var parts = str.split(",");
+    if (parts.length !== 10) return false;
+    for (var i = 0; i < 10; i++){
+      var v = parseInt(parts[i], 10);
+      if (isNaN(v) || v < 0 || v > 3) return false;
+      var el = form.querySelector('input[name="q' + (i + 1) + '"][value="' + v + '"]');
+      if (el) el.checked = true;
+    }
+    return true;
+  }
+
+  function shareUrl(){
+    var base = location.href.split("#")[0];
+    return base + "#r=" + encode();
+  }
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    window.clearTimeout(showToast._t);
+    showToast._t = window.setTimeout(function(){ toast.classList.remove("show"); }, 2600);
+  }
+
+  function fallbackCopy(url){
+    var ta = document.createElement("textarea");
+    ta.value = url;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.top = "-1000px";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); showToast("Link copied — it carries your answers"); }
+    catch(e){ showToast("Copy this link: " + url); }
+    document.body.removeChild(ta);
+  }
+
+  document.getElementById("shareBtn").addEventListener("click", function(){
+    var url = shareUrl();
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(function(){
+        showToast("Link copied — it carries your answers");
+      }).catch(function(){ fallbackCopy(url); });
+    } else {
+      fallbackCopy(url);
+    }
+  });
+
+  document.getElementById("printBtn").addEventListener("click", function(){
+    document.querySelectorAll("details").forEach(function(d){ d.open = true; });
+    window.print();
+  });
+
+  // ---- events ----
+  form.addEventListener("change", updateProgress);
+  form.addEventListener("submit", function(e){ e.preventDefault(); });
+
+  revealBtn.addEventListener("click", function(){ render(false); });
+
+  resetBtn.addEventListener("click", function(){
+    form.reset();
+    revealed = false;
+    results.hidden = true;
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    history.replaceState(null, "", location.pathname + location.search);
+    showToast("Quiz answers cleared");
+  });
+
+  // ---- boot ----
+  (function boot(){
+    var m = (location.hash || "").match(/[#&]r=([0-3],[0-3],[0-3],[0-3],[0-3],[0-3],[0-3],[0-3],[0-3],[0-3])/);
+    if (m && decode(m[1])){
+      updateProgress();
+      render(true);
+      showToast("Loaded a shared result");
+    } else {
+      updateProgress();
+    }
+  })();
+})();
+</script>
+</body>
+</html>
